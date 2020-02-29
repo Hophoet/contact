@@ -1,16 +1,22 @@
 import React from 'react'
-import {StyleSheet, ActivityIndicator, View, FlatList, Text, TextInput, TouchableOpacity} from 'react-native'
+import {StyleSheet, ActivityIndicator, View, Modal, FlatList, Text, TextInput, TouchableOpacity} from 'react-native'
 import {Entypo, Ionicons} from '@expo/vector-icons'
 import Icon from "react-native-vector-icons/Ionicons";
-//item
+//components
 import {ContactItem} from '../components/ContactItem'
+import FloatButton from '../components/FloatButton'
+import AddContactModal from '../components/AddContactModal'
+
 
 export default class  Main extends React.Component{
     constructor(props){
         super()
         this.state = {
+            authToken:'',
             searchContact:'',
             isLoading:false,
+            addContactModalIsShow: false,
+
             baseData:[
                 {first_name:'Hophoet', email:'hohoet@gmail.com', last_name:'Agbaku'},
                 {first_name:'Robert', email:'hphoet@gmail.com', last_name:'Lucs'},
@@ -18,6 +24,9 @@ export default class  Main extends React.Component{
                 {first_name:'Alice', email:'hopet@gmail.com', last_name:'Bruce'},
                 {first_name:'Gloria', email:'hhoet@gmail.com', last_name:'Agbeha'},
                 {first_name:'Dalmeda', email:'hooet@gmail.com', last_name:'Joz'},
+                {first_name:'cilvest', email:'1@gmail.com', last_name:'Bruce'},
+                {first_name:'Miriel', email:'2@gmail.com', last_name:'Agbeha'},
+                {first_name:'Celine', email:'3@gmail.com', last_name:'Joz'},
             ],
             data:[
                 {first_name:'Hophoet', email:'hohoet@gmail.com', last_name:'Agbaku'},
@@ -25,7 +34,10 @@ export default class  Main extends React.Component{
                 {first_name:'Emanule', email:'phoet@gmail.com', last_name:'Aboh'},
                 {first_name:'Alice', email:'hopet@gmail.com', last_name:'Bruce'},
                 {first_name:'Gloria', email:'hhoet@gmail.com', last_name:'Agbeha'},
-                {first_name:'Dalmeda', email:'hooet@gmail.com', last_name:'Joz'},
+                {first_name:'Dalmeda', email:'5@gmail.com', last_name:'Joz'},
+                {first_name:'cilvest', email:'1@gmail.com', last_name:'Bruce'},
+                {first_name:'Miriel', email:'3@gmail.com', last_name:'Agbeha'},
+                {first_name:'Celine', email:'4@gmail.com', last_name:'Joz'},
             ]
         }
     }
@@ -34,7 +46,7 @@ export default class  Main extends React.Component{
         let text = query.trim().toLowerCase()
         if(text){
             this.setState({
-                data:[...this.state.baseData.filter(contact => (contact.first_name.toLowerCase().indexOf(text) >= 0 || contact.last_name.indexOf(text) >= 0 || contact.email.indexOf(text) >= 0 ))]
+                data:[...this.state.baseData.filter(contact => (contact.first_name.toLowerCase().indexOf(text) >= 0 || contact.last_name.toLowerCase().indexOf(text) >= 0 || contact.email.toLowerCase().indexOf(text) >= 0 ))]
             })
         }
         else{
@@ -44,30 +56,9 @@ export default class  Main extends React.Component{
         }
        
     }
-    
-    _searchContact = (query) =>  {
-        this.setState({searchContact:this.state.searchContact.trim()})
-        if(this.state.searchContact.length > 0){
-        this.setState({isLoading:true})
-        var requestOptions = {
-            method: 'GET',
-            redirect: 'follow'
-          };          
-          fetch(`https://hophoetmovies.herokuapp.com/api/contact?query=${query}`, requestOptions)
-            .then(response => response.json())
-            .then(result => {
-                this.setState({data:[...result]})
-             
-                this.setState({isLoading:false})
-                this.setState({searchContact:''})
-            })
-            .catch(error => {
-                console.log('error', error)
-                this.setState({isLoading:false})
-                this.setState({searchContact:''})
-            });
-        }
-
+    //toggle add contact component modal
+    toggleAddContactModal = () =>{
+        this.setState({addContactModalIsShow:!this.state.addContactModalIsShow})
     }
     //get api contact method
     _getAllContact = () => {
@@ -113,9 +104,25 @@ export default class  Main extends React.Component{
        
     }
 
+    _getAuthTokenFromSplashScreen = ()=>{
+        let params = this.props.navigation.state.params
+        //params exists case
+        if(params){
+            this.setState({'authToken':params.token}, ()=>{
+                console.log(this.state.authToken)
+            })
+
+        }
+        //token not received case
+        else{
+            console.log('token not received')
+        }
+    }
+
 
     componentDidMount(){
        // this._getAllContact()
+        this._getAuthTokenFromSplashScreen()
 
     }
 
@@ -158,7 +165,19 @@ export default class  Main extends React.Component{
     render(){
         return(
             <View style={styles.container}>
+                <Modal onRequestClose={this.toggleAddContactModal} visible={this.state.addContactModalIsShow}>
+                    <AddContactModal toggleAddContactModal={this.toggleAddContactModal}/>
+                </Modal>
                 <View style={styles.headerContainer}>
+                    <TouchableOpacity 
+                        activeOpacity={.5}
+                        style={styles.buttonContainer}
+                        onPress={() => {
+                            this._searchContact(this.state.searchContact)
+                        }}
+                        >
+                        <Icon name="ios-search" color='gray' size={25}/>
+                    </TouchableOpacity>
                     <TextInput 
                         ref='searchTextinput'
                         placeholder='Enter contact name'
@@ -171,15 +190,7 @@ export default class  Main extends React.Component{
                         }}
                         />
                     
-                    <TouchableOpacity 
-                        activeOpacity={.5}
-                        style={styles.buttonContainer}
-                        onPress={() => {
-                            this._searchContact(this.state.searchContact)
-                        }}
-                        >
-                        <Icon name="ios-search" color='white' size={25}/>
-                    </TouchableOpacity>
+                  
 
                 </View>
                 
@@ -187,6 +198,9 @@ export default class  Main extends React.Component{
                     {this._showData()}
                     
                 </View>
+
+                <FloatButton toggleAddContactModal={this.toggleAddContactModal}/>
+               
             
          
             </View>
@@ -205,7 +219,7 @@ const styles = StyleSheet.create({
         flexDirection:'row',
         alignItems:'center',
         paddingHorizontal:20,
-        marginVertical:10
+        marginVertical:10,
        
     },
     itemsContainer:{
@@ -213,18 +227,23 @@ const styles = StyleSheet.create({
     },
     textinput:{
         flex:1,
-        backgroundColor:'white',
-        paddingHorizontal:20,
         height:50,
-        elevation:10
+        elevation:5,
+        backgroundColor:'white',
+        borderTopRightRadius:30,
+        borderBottomRightRadius:30,
+      
+        
     },
     buttonContainer:{
-        backgroundColor:'gray',
         height:50,
-        width:90,
         justifyContent:'center',
         alignItems:'center',
-        elevation:10
+        elevation:5,
+        backgroundColor:'white',
+        padding:10,
+        borderTopLeftRadius:30,
+        borderBottomLeftRadius:30,
     },
     buttonText:{
         color:'white',
