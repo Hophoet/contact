@@ -24,11 +24,13 @@ const MainNav = createSwitchNavigator({
   Main:{
     screen:Main
   }
+},{
+  initialRouteName:'Main'
 })
 
 const AppNav = createSwitchNavigator({
   Main:{
-    screen:MainNav
+    screen:Main
   },
   Auth:{
     screen:AuthNav
