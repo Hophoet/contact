@@ -16,7 +16,12 @@ function getContact(id){
           fetch("https://hophoetmovies.herokuapp.com/api/contact/"+id, requestOptions)
             .then(response => response.json())
             .then(result => {
-                alert(result[0].name)
+                alert(`
+                ${result[1].first_name} ${result[1].last_name}
+                Phone Number: ${result[1].phone_number}
+                Company: ${result[0].name}
+                Location: ${result[0].location}
+                `)
             })
             .catch(error => {
                 console.log('error', error)

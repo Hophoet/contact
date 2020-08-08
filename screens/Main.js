@@ -25,7 +25,7 @@ export default class  Main extends React.Component{
           fetch("https://hophoetmovies.herokuapp.com/api/", requestOptions)
             .then(response => response.json())
             .then(result => {
-                console.log(result)
+                //console.log(result)
                 this.setState({data:[...result]})
                 this.setState({isLoading:false})
             })
@@ -59,7 +59,7 @@ export default class  Main extends React.Component{
 
 
     componentDidMount(){
-        //this._getAllContact()
+        this._getAllContact()
 
     }
 
@@ -108,7 +108,7 @@ export default class  Main extends React.Component{
                     <TouchableOpacity 
                         activeOpacity={.5}
                         style={styles.buttonContainer}
-                        
+                        onPress={this._getAllContact}
                         >
                         <Icon name="ios-search" color='white' size={25}/>
                     </TouchableOpacity>
@@ -136,7 +136,8 @@ const styles = StyleSheet.create({
         flex:1,
         flexDirection:'row',
         alignItems:'center',
-        paddingHorizontal:20
+        paddingHorizontal:20,
+        marginVertical:10
        
     },
     itemsContainer:{
