@@ -16,13 +16,18 @@ function getContact(id){
           fetch("https://hophoetmovies.herokuapp.com/api/contact/"+id, requestOptions)
             .then(response => response.json())
             .then(result => {
-                alert(`
-                ${result[1].first_name} ${result[1].last_name}
-                Phone Number: ${result[1].phone_number}
-                Company: ${result[0].name}
-                Location: ${result[0].location}
-                `)
+                Alert.alert(
+                    `${result[0].first_name} ${result[0].last_name}
+                    `,
+                    `Phone Number: ${result[0].phone_number}\nCompany: ${result[1].name}
+                   ` ,
+                    [
+                      { text: "OK", onPress: () => console.log("OK Pressed") }
+                    ],
+                    { cancelable: true }
+                  )
             })
+           
             .catch(error => {
                 console.log('error', error)
                 
@@ -43,8 +48,9 @@ let ContactItem = (props) => {
             }
             }
             >
-            <Icon style={styles.icon} name='person-circle' size={40} color='gray'/>
+            <Icon style={styles.icon} name='person' size={40} color='gray'/>
             <Text>{props.item.first_name} {item.last_name}</Text>
+    
         </TouchableOpacity>
     )
 }
