@@ -11,10 +11,33 @@ export default class  Main extends React.Component{
         this.state = {
             searchContact:'',
             isLoading:false,
-            data:[{"email": "hophoet@gmail.com", "first_name": "hophoet", "id": 1, "last_name": "Agbaku", "phone_number": "99797640"}, {"email": "celine@gmail.com", "first_name": "celine", "id": 2, "last_name": "Sanchez", "phone_number": "01876745"}, {"email": "hirs@gmail.com", "first_name": "Hirs", "id": 3, "last_name": "Rolerts", "phone_number": "89876545"}]
+            data:[]
         }
     }
- 
+    _searchContact = (query) =>  {
+        this.setState({searchContact:this.state.searchContact.trim()})
+        if(this.state.searchContact.length > 0){
+        this.setState({isLoading:true})
+        var requestOptions = {
+            method: 'GET',
+            redirect: 'follow'
+          };          
+          fetch(`https://hophoetmovies.herokuapp.com/api/contact?query=${query}`, requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                this.setState({data:[...result]})
+                console.log(result)
+                this.setState({isLoading:false})
+                this.setState({searchContact:''})
+            })
+            .catch(error => {
+                console.log('error', error)
+                this.setState({isLoading:false})
+                this.setState({searchContact:''})
+            });
+        }
+
+    }
     //get api contact method
     _getAllContact = () => {
         this.setState({isLoading:true})
@@ -28,10 +51,12 @@ export default class  Main extends React.Component{
                 //console.log(result)
                 this.setState({data:[...result]})
                 this.setState({isLoading:false})
+                
             })
             .catch(error => {
                 console.log('error', error)
                 this.setState({isLoading:false})
+                
             });
        
     }
@@ -71,14 +96,18 @@ export default class  Main extends React.Component{
                             data={this.state.data}
                             keyExtractor={item => item.email}
                             renderItem={({item})=><ContactItem item={item}/>}
+                            refreshing={false}
+                            onRefresh={this._getAllContact}
                     />
                 )
             }
             else{
                 return (
                     <View style={styles.notFoundContainer}>
+                        <Icon name="ios-call" color='gray' size={25}/>
                         <Text style={styles.notFoundText}>Contacts Not Found</Text>
-                        <Text style={styles.checkConnexionText}>Check your connexion</Text>
+                        
+                        <Text style={styles.checkConnexionText}></Text>
                     </View>
                 )
                 
@@ -103,12 +132,17 @@ export default class  Main extends React.Component{
                         placeholder='Enter contact name'
                         style={styles.textinput}
                         onChangeText={searchContact =>this.setState({searchContact})}
+                        onSubmitEditing={()=> {
+                            this._searchContact(this.state.searchContact)
+                        }}
                         />
                     
                     <TouchableOpacity 
                         activeOpacity={.5}
                         style={styles.buttonContainer}
-                        onPress={this._getAllContact}
+                        onPress={() => {
+                            this._searchContact(this.state.searchContact)
+                        }}
                         >
                         <Icon name="ios-search" color='white' size={25}/>
                     </TouchableOpacity>
@@ -142,14 +176,13 @@ const styles = StyleSheet.create({
     },
     itemsContainer:{
         flex:6,
-        backgroundColor:'white',
     },
     textinput:{
         flex:1,
         backgroundColor:'white',
         paddingHorizontal:20,
         height:50,
-        elevation:20
+        elevation:10
     },
     buttonContainer:{
         backgroundColor:'gray',
@@ -177,7 +210,8 @@ const styles = StyleSheet.create({
     },
     notFoundContainer:{
         marginTop:50,
-        flex:1
+        flex:1,
+        alignItems:'center'
     },
     notFoundText:{
         color:'gray',
