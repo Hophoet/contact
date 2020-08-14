@@ -29,7 +29,15 @@ function getContact(id){
             })
            
             .catch(error => {
-                console.log('error', error)
+                Alert.alert(
+                    `connexion error
+                    `,
+                    `Check your connexion`,
+                    [
+                      { text: "OK", onPress: () => console.log("OK Pressed") }
+                    ],
+                    { cancelable: true }
+                  )
                 
             });
        

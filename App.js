@@ -18,12 +18,14 @@ import {
 
 //screens
 import Main from './screens/Main'
+//navigators
+import AuthStack from './navigations/Navigators'
 
 
 export default class App extends React.Component{
   render(){
     return(
-      <Main/>
+      <AuthStack/>
     )
   }
 }
