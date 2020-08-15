@@ -3,54 +3,82 @@ import {StyleSheet, View, Text, ActivityIndicator, TextInput, TouchableOpacity} 
 import {Entypo, Ionicons} from '@expo/vector-icons'
 import Toast from '../components/toasts'
 
-export default class  Login extends React.Component{
+export default class  Login extends React.Component{ 
     constructor(props){
         super(props)
+        //set state
         this.state = {
             isLoading:false,
        
         }
+        //set username and password 
         this.username = ''
         this.password = ''
     }
 
-    _login = (username, password) => {
-        this.setState({isLoading:true})
-        var myHeaders = new Headers();
-        //myHeaders.append("Authorization", "Token 64bab5ff0ac2b13a84fe9580dea2acee13748c15");
-
-        var formdata = new FormData();
-        formdata.append("username", username.trim());
-        formdata.append("password ", password);
-
-        var requestOptions = {
-        method: 'POST',
-        //headers: myHeaders,
-        body: formdata,
-        redirect: 'follow'
-        };
-
-        fetch("https://hophoetmovies.herokuapp.com/api/token/", requestOptions)
-        .then(response => response)
-        .then(result => {
-            console.log(result.status)
-            if(result.status >= 400 && result.status < 500){
-                console.log('error')
+    //login method
+    _login = () => {
+        //check request loading
+        if(!this.state.isLoading){     
+            //start the loading
+            this.setState({isLoading:true})
+            //get fields values
+            let username = this.username.trim()
+            let password = this.password
+            //check the requirements of the fiels
+            if(username.length === 0 && password.length === 0){
+                Toast._show_bottom_toast('username and password are required')
+                this.setState({isLoading:false})
             }
-            else if (result.status === 200){
-                this.props.navigation.navigate('App')
+            //username empty case
+            else if(username.length === 0){
+                Toast._show_bottom_toast('username field is required')
+                this.setState({isLoading:false})
             }
+            //password empty case
+            else if(password.length === 0){
+                Toast._show_bottom_toast('password field is required')
+                this.setState({isLoading:false})
+            }
+            //username and password provided case
+            else{
+                //build POST request with the username and password providede
+                var myHeaders = new Headers();
+                var formdata = new FormData();
+                formdata.append("username", username);
+                formdata.append("password ", password);
 
-            this.setState({isLoading:false})
-            
-        })
-        .catch(error => {
-            this.setState({isLoading:false})
-            Toast._show_bottom_toast('This is a toast.')
-            console.log('error '+ error)
-        });
+                var requestOptions = {
+                method: 'POST',
+                body: formdata,
+                redirect: 'follow'
+                };
+                fetch("https://hophoetmovies.herokuapp.com/api/token/", requestOptions)
+                .then(result => {
+                    //successfull request response case
+                    //invalid response 
+                    if(result.status >= 400 && result.status < 500){
+                        console.log('error')
+                    }
+                    //valid response
+                    else if (result.status === 200){
+                        //navigate to the Main screen of the App
+                        this.props.navigation.navigate('App')
+                    }
+                    //stop the loading
+                    this.setState({isLoading:false})
+                    
+                })
+                .catch(error => {
+                    //failed request case
+                    //stop the loading
+                    this.setState({isLoading:false})
+                    Toast._show_bottom_toast('Network request failed')
+                });
+            }
+        }
     }
-    
+    //loading activity render
     _loader = () => {
         if(this.state.isLoading){
             return (
@@ -61,6 +89,7 @@ export default class  Login extends React.Component{
         }
     }
 
+    //components rending method
     render(){
         return(
             <View style={styles.container}>
@@ -85,18 +114,14 @@ export default class  Login extends React.Component{
                         style={styles.textinput}
                         secureTextEntry={true}
                         onChangeText={text=>{this.password = text}}
-                        onSubmitEditing={()=>{
-                            this._login(this.username, this.password)
-                        }}
+                        onSubmitEditing={this._login}
 
                     />
                 </View>
                 <TouchableOpacity 
                     style={styles.buttonContainer} 
-                    onPress={() => {
-                        this._login(this.username, this.password)
-                    }}
-                    
+                    onPress={this._login}
+                    disabled={(this.state.isLoading)?true:false}
                     >
                     <Text style={styles.buttonText}>LOGIN</Text>
                 </TouchableOpacity>
@@ -105,6 +130,7 @@ export default class  Login extends React.Component{
     }
 }
 
+//set screen styles
 const styles = StyleSheet.create({
     container:{
         flex:1,
