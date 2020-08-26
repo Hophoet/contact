@@ -107,7 +107,7 @@ export default class  Login extends React.Component{
                         style={styles.textinput}
                         onChangeText={text=>{this.username = text}}
                         onSubmitEditing={()=>{
-                            
+                            this.refs.password.focus()
                 
                         }}
                     />
@@ -126,8 +126,11 @@ export default class  Login extends React.Component{
                     onPress={this._login}
                     disabled={(this.state.isLoading)?true:false}
                     >
-                    <Text style={styles.buttonText}>LOGIN</Text>
+                    <Text style={styles.buttonText}>SIGN IN</Text>
                 </TouchableOpacity>
+                <View style={styles.footer}>
+                    <Text onPress={()=> this.props.navigation.navigate('SignUp')} style={styles.footerTitle}>Not have an account yet ? sign up</Text>
+                </View>
             </View>
         )
     }
@@ -170,5 +173,9 @@ const styles = StyleSheet.create({
     headerContainer:{
         alignItems:'center',
         marginBottom:20
+    },
+    footerTitle:{
+        color:'gray',
+        margin:20
     }
 })

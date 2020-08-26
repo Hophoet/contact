@@ -14,25 +14,34 @@ export default class  Login extends React.Component{
         //set username and password 
         this.username = ''
         this.password = ''
+        this.email = ''
     }
 
-    //login method
-    _login = () => {
+    //signup method
+    _signUp = () => {
         //check request loading
         if(!this.state.isLoading){     
             //start the loading
             this.setState({isLoading:true})
             //get fields values
             let username = this.username.trim()
+            let email = this.email.trim()
             let password = this.password
+
+
             //check the requirements of the fiels
-            if(username.length === 0 && password.length === 0){
-                Toast._show_bottom_toast('username and password are required')
+            if(username.length === 0 && password.length === 0 && email.length === 0){
+                Toast._show_bottom_toast('username, email and password are required')
                 this.setState({isLoading:false})
             }
             //username empty case
             else if(username.length === 0){
                 Toast._show_bottom_toast('username field is required')
+                this.setState({isLoading:false})
+            }
+            //email empty case
+            else if(email.length === 0){
+                Toast._show_bottom_toast('email field is required')
                 this.setState({isLoading:false})
             }
             //password empty case
@@ -43,6 +52,7 @@ export default class  Login extends React.Component{
             //username and password provided case
             else{
                 //build POST request with the username and password providede
+                this.props.navigation.navigate('SignIn')
                 var myHeaders = new Headers();
                 var formdata = new FormData();
                 formdata.append("username", username);
@@ -98,7 +108,7 @@ export default class  Login extends React.Component{
             <View style={styles.container}>
                 <View style={styles.headerContainer}>
                     <Text>Contact</Text>
-                    <Text>Login to continue</Text>
+                    <Text>Sign up to continue</Text>
                     {this._loader()}
                 </View>
                 <View style={styles.formContainer}>
@@ -107,27 +117,44 @@ export default class  Login extends React.Component{
                         style={styles.textinput}
                         onChangeText={text=>{this.username = text}}
                         onSubmitEditing={()=>{
-                            
+                            this.refs.email.focus()
                 
                         }}
                     />
                      <TextInput
+                        placeholder='Enter your email'
+                        ref='email'
+                        style={styles.textinput}
+                        keyboardType='email-address'
+                        onChangeText={text=>{this.email = text}}
+                        onSubmitEditing={() => this.refs.password.focus()}
+
+                    />
+                      <TextInput
                         placeholder='Enter your password'
                         ref='password'
                         style={styles.textinput}
                         secureTextEntry={true}
                         onChangeText={text=>{this.password = text}}
-                        onSubmitEditing={this._login}
+                        onSubmitEditing={() => {
+                            if(!this.state.isLoading){
+                                this._signUp
+                            }
+                        }
+                        }
 
                     />
                 </View>
                 <TouchableOpacity 
                     style={styles.buttonContainer} 
-                    onPress={this._login}
+                    onPress={this._signUp}
                     disabled={(this.state.isLoading)?true:false}
                     >
-                    <Text style={styles.buttonText}>LOGIN</Text>
+                    <Text style={styles.buttonText}>SIGN UP</Text>
                 </TouchableOpacity>
+                <View style={styles.footer}>
+                    <Text onPress={()=> this.props.navigation.navigate('SignIn')} style={styles.footerTitle}>Alraidy have an account ? sign in</Text>
+                </View>
             </View>
         )
     }
@@ -170,5 +197,9 @@ const styles = StyleSheet.create({
     headerContainer:{
         alignItems:'center',
         marginBottom:20
+    },
+    footerTitle:{
+        color:'gray',
+        margin:20
     }
 })

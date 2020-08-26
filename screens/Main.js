@@ -11,9 +11,40 @@ export default class  Main extends React.Component{
         this.state = {
             searchContact:'',
             isLoading:false,
-            data:[]
+            baseData:[
+                {first_name:'Hophoet', email:'hohoet@gmail.com', last_name:'Agbaku'},
+                {first_name:'Robert', email:'hphoet@gmail.com', last_name:'Lucs'},
+                {first_name:'Emanule', email:'phoet@gmail.com', last_name:'Aboh'},
+                {first_name:'Alice', email:'hopet@gmail.com', last_name:'Bruce'},
+                {first_name:'Gloria', email:'hhoet@gmail.com', last_name:'Agbeha'},
+                {first_name:'Dalmeda', email:'hooet@gmail.com', last_name:'Joz'},
+            ],
+            data:[
+                {first_name:'Hophoet', email:'hohoet@gmail.com', last_name:'Agbaku'},
+                {first_name:'Robert', email:'hphoet@gmail.com', last_name:'Lucs'},
+                {first_name:'Emanule', email:'phoet@gmail.com', last_name:'Aboh'},
+                {first_name:'Alice', email:'hopet@gmail.com', last_name:'Bruce'},
+                {first_name:'Gloria', email:'hhoet@gmail.com', last_name:'Agbeha'},
+                {first_name:'Dalmeda', email:'hooet@gmail.com', last_name:'Joz'},
+            ]
         }
     }
+
+    _stateSearch = (query) => {
+        let text = query.trim().toLowerCase()
+        if(text){
+            this.setState({
+                data:[...this.state.baseData.filter(contact => (contact.first_name.toLowerCase().indexOf(text) > 0 || contact.last_name.indexOf(text) > 0 || contact.email.indexOf(text) > 0 ))]
+            })
+        }
+        else{
+            this.setState({
+                data:[...this.state.baseData]
+            })
+        }
+       
+    }
+    
     _searchContact = (query) =>  {
         this.setState({searchContact:this.state.searchContact.trim()})
         if(this.state.searchContact.length > 0){
@@ -26,7 +57,7 @@ export default class  Main extends React.Component{
             .then(response => response.json())
             .then(result => {
                 this.setState({data:[...result]})
-                console.log(result)
+             
                 this.setState({isLoading:false})
                 this.setState({searchContact:''})
             })
@@ -84,7 +115,7 @@ export default class  Main extends React.Component{
 
 
     componentDidMount(){
-        this._getAllContact()
+       // this._getAllContact()
 
     }
 
@@ -104,7 +135,7 @@ export default class  Main extends React.Component{
             else{
                 return (
                     <View style={styles.notFoundContainer}>
-                        <Icon name="ios-call" color='gray' size={25}/>
+                        <Icon name="ios-call" color='gray' size={25}/>   
                         <Text style={styles.notFoundText}>Contacts Not Found</Text>
                         
                         <Text style={styles.checkConnexionText}></Text>
@@ -129,11 +160,14 @@ export default class  Main extends React.Component{
             <View style={styles.container}>
                 <View style={styles.headerContainer}>
                     <TextInput 
+                        ref='searchTextinput'
                         placeholder='Enter contact name'
                         style={styles.textinput}
-                        onChangeText={searchContact =>this.setState({searchContact})}
+                        onChangeText={text =>{
+                            this._stateSearch(text)
+                        }}
                         onSubmitEditing={()=> {
-                            this._searchContact(this.state.searchContact)
+                            //this._searchContact(this.state.searchContact)
                         }}
                         />
                     
@@ -189,7 +223,8 @@ const styles = StyleSheet.create({
         height:50,
         width:90,
         justifyContent:'center',
-        alignItems:'center'
+        alignItems:'center',
+        elevation:10
     },
     buttonText:{
         color:'white',
