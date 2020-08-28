@@ -34,7 +34,7 @@ export default class  Main extends React.Component{
         let text = query.trim().toLowerCase()
         if(text){
             this.setState({
-                data:[...this.state.baseData.filter(contact => (contact.first_name.toLowerCase().indexOf(text) > 0 || contact.last_name.indexOf(text) > 0 || contact.email.indexOf(text) > 0 ))]
+                data:[...this.state.baseData.filter(contact => (contact.first_name.toLowerCase().indexOf(text) >= 0 || contact.last_name.indexOf(text) >= 0 || contact.email.indexOf(text) >= 0 ))]
             })
         }
         else{

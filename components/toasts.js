@@ -10,6 +10,7 @@ export default class Toast {
     //ToastAndroid.SHORT for short duration
     //ToastAndroid.LONG for long duration
     ToastAndroid.show(message, ToastAndroid.SHORT)
+    
   }
   //show toast
   static _show_center_toast = async (message) => {

@@ -22,7 +22,7 @@ function getContact(id){
                     `Phone Number: ${result[0].phone_number}\nCompany: ${result[1].name}
                    ` ,
                     [
-                      { text: "OK", onPress: () => console.log("OK Pressed") }
+                      { text: "OK", onPress: () => {} }
                     ],
                     { cancelable: true }
                   )
@@ -30,11 +30,10 @@ function getContact(id){
            
             .catch(error => {
                 Alert.alert(
-                    `connexion error
-                    `,
+                    '',
                     `Check your connexion`,
                     [
-                      { text: "OK", onPress: () => console.log("OK Pressed") }
+                      { text: "OK", onPress: () => {} }
                     ],
                     { cancelable: true }
                   )

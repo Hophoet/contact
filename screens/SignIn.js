@@ -53,24 +53,33 @@ export default class  Login extends React.Component{
                 body: formdata,
                 redirect: 'follow'
                 };
-                fetch("https://hophoetmovies.herokuapp.com/api/login/", requestOptions)
-                .then(result => {
-                    
+                fetch("https://hophoetapis.herokuapp.com/rest-auth/login/", requestOptions)
+                .then(result => {   
                     //successfull request response case
                     //invalid response 
-                    if(result.status >= 400 && result.status < 500){
+                    if(result.status == 400){
                         console.log('error')
-                        Toast._show_bottom_toast('Incorrect username or password')
+                        Toast._show_bottom_toast('Bad request')
 
                     }
                     //valid response
                     else if (result.status === 200){
                         //navigate to the Main screen of the App
-                        this.props.navigation.navigate('App')
+                        //this.props.navigation.navigate('App')
+                        Toast._show_bottom_toast('Login successfully')
+                        return result.json()
+
                     }
                     //stop the loading
                     this.setState({isLoading:false})
                     
+                })
+                .then(response => {
+                    //get of the login token
+                    let token = response.key
+                    // console.log(token)
+                    this.props.navigation.navigate('Splash', {'token':token})
+
                 })
                 .catch(error => {
                     //failed request case

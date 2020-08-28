@@ -19,13 +19,15 @@ import {
 //screens
 import Main from './screens/Main'
 //navigators
-import AuthStack from './navigations/Navigators'
+import Nav from './navigations/Navigators'
+import SignIn from './screens/SignIn'
+import SignUp from './screens/SignUp'
 
 
 export default class App extends React.Component{
   render(){
     return(
-      <AuthStack/>
+      <Nav/>
     )
   }
 }
