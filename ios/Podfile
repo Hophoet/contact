@@ -12,6 +12,8 @@ target 'contact' do
 
   pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
 
+  pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-community/async-storage'
+
   target 'contactTests' do
     inherit! :complete
     # Pods for testing

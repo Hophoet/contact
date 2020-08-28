@@ -51,42 +51,65 @@ export default class  Login extends React.Component{
             }
             //username and password provided case
             else{
+
+                let registrationDone = false
                 //build POST request with the username and password providede
-                this.props.navigation.navigate('SignIn')
                 var myHeaders = new Headers();
                 var formdata = new FormData();
                 formdata.append("username", username);
-                formdata.append("password ", password);
+                // formdata.append("email", email);
+                formdata.append("password1", password);
+                formdata.append("password2", password);
 
                 var requestOptions = {
                 method: 'POST',
                 body: formdata,
                 redirect: 'follow'
                 };
-                fetch("https://hophoetmovies.herokuapp.com/api/login/", requestOptions)
+                fetch("https://hophoetapis.herokuapp.com/rest-auth/registration/", requestOptions)
                 .then(result => {
-                    
                     //successfull request response case
                     //invalid response 
-                    if(result.status >= 400 && result.status < 500){
-                        console.log('error')
-                        Toast._show_bottom_toast('Incorrect username or password')
+                    if(result.status === 400){
+                        console.log('error 400')
+                        Toast._show_bottom_toast('Bad request')
+                        return result.json()
 
                     }
                     //valid response
-                    else if (result.status === 200){
+                    else if (result.status === 201){
+                        registrationDone = true
                         //navigate to the Main screen of the App
-                        this.props.navigation.navigate('App')
+                        Toast._show_bottom_toast('registration successfully')
+                        return result.json()
+                    }
+                    else{
+                        Toast._show_bottom_toast('status'+result.status)
+                       
                     }
                     //stop the loading
                     this.setState({isLoading:false})
                     
+                })
+                .then(response => {
+                    //registration done case
+                    if(registrationDone){
+                        let token = response.key
+                        this.props.navigation.navigate('Splash', { 'token': token })
+                    }
+                      //get of the login token
+                     //stop the loading
+                     this.setState({isLoading:false})
+  
                 })
                 .catch(error => {
                     //failed request case
                     //stop the loading
                     this.setState({isLoading:false})
                     Toast._show_bottom_toast('Network request failed')
+                    console.log(error)
+                     //stop the loading
+                     this.setState({isLoading:false})
                 });
             }
         }

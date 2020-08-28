@@ -1,86 +1,82 @@
 import React from 'react'
 import {StyleSheet, View, Text, ActivityIndicator} from 'react-native'
-import {AsyncStorage} from '@react-native-community/async-storage'
-import Icon from "react-native-vector-icons/Ionicons";
+import AsyncStorage from '@react-native-community/async-storage';import Icon from "react-native-vector-icons/Ionicons";
 
 export default class  Enter extends React.Component{
     constructor(props){
         super(props)
-        this.state = {
-            token:''
-        }
+      
     }
-    
-    //getter
-    get token(){
-        return this.state.data
-    }
-    //setter
-    set token(data){
-        this.setState({ data })
-    }
-
-    //store data
-    _storeToken = (token)=>{
-        AsyncStorage
-        .setItem('token', token)
-    }
+ 
 
     //get from storage
     _getTokenFormStorage = async () =>{
         const keys = await AsyncStorage.getAllKeys()
         const values = await AsyncStorage.multiGet(keys)
-        // console.log(keys)
-        // console.log(values)
-        this.setState({toDisplay:values[0][1]})
+        console.log(keys)
+        console.log(values)
+        // this.setState({toDisplay:values[0][1]})
     }
 
-    tokenExists = () => {
-        if(this.state.token.trim().length === 0){
-            return false
-        }
-        return true
-    }
+
 
     //get token by from the login
     _navigateTo = () => {
-        //token exists case
-        if(this.tokenExists()){
-           // this.props.navigation.navigate('Main')
-           console.log('TOKEN EXIST')
-        }
+       
+       
         //first login case
-        else {
-            let params = this.props.navigation.state.params
-            if(params){
-                console.log(params)
-                if(params.token){
-                    console.log('TOKEN '+params.token)
-                    // this.props.navigation.navigate('Main')
-                }
-                else{
-                    console.log('TOKEN NOT SET')
-                    // this.props.navigation.navigate('Auth')
-                }
+        let params = this.props.navigation.state.params
+        if(params){
+            //if token exists in the params   
+            if(params.token){
+                //save the token 
+                this._saveToken(params.token)
+                    
+                this.props.navigation.navigate('Main', {'token':params.token})
             }
             else{
-                console.log('TOKEN NOT SET')
-                // this.props.navigation.navigate('Auth')
+                //token exists case
+                this._navigateIfTokenSave()
             }
         }
-        
+        else{
+             //token exists case
+            this._navigateIfTokenSave()
+        }
+       
     }
+        
+    
   
+    //
+    _navigateIfTokenSave =  async () => {
+        const keys = await AsyncStorage.getAllKeys()
+        const values = await AsyncStorage.multiGet(keys)
+        let tokenExists = false
+        values.forEach( item => {
+            if(item){
+                if(item[0] === 'token'){
+                    //navigate if token alrdy store
+                    this.props.navigation.navigate('Main', {'token':item[1]})
+                    tokenExists =  true
+                }
+            }
+        })
+        if(!tokenExists){
+            this.props.navigation.navigate('Auth')
 
+        }
+    }
     //save token
     _saveToken = (token) => {
         AsyncStorage.setItem('token', token)
+        .then(()=>console.log('save'))
     }
+
 
     componentDidMount(){
         setTimeout(() => {
-            // this._navigateTo()
-            this._getTokenFormStorage()
+            this._navigateTo()  
         }, 3000)
     }
   
