@@ -46,6 +46,9 @@ function getContact(id){
 //item
 let ContactItem = (props) => {
     const item = props.item
+    let firstLetter =  item.first_name.trim().charAt(0).toUpperCase()
+    let lastLetter =  item.last_name.trim().charAt(0).toUpperCase()
+
     return(
         <TouchableOpacity 
             activeOpacity={.5} 
@@ -55,7 +58,9 @@ let ContactItem = (props) => {
             }
             }
             >
-            <Icon style={styles.icon} name='person' size={40} color='gray'/>
+            <View style={styles.iconContainer}> 
+                <Text style={styles.letterIcon} >{firstLetter}{lastLetter}</Text>
+            </View>
             <Text>{props.item.first_name} {item.last_name}</Text>
     
         </TouchableOpacity>
@@ -68,9 +73,25 @@ const styles = StyleSheet.create({
     container:{
         flexDirection:'row',
         alignItems:'center',
-        margin:10
+        margin:10,
+        alignSelf:'flex-start'
     },
     icon:{
         margin:5
+    },
+    iconContainer:{
+        borderColor:'gray',
+        borderRadius:60,
+        justifyContent:'center',
+        alignItems:'center',
+        borderWidth:1,
+        marginRight:5,
+        width:60,
+        height:60,
+        
+    },
+    letterIcon:{
+        fontSize:25,
+        fontWeight:'bold',
     }
 })
