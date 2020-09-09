@@ -1,24 +1,32 @@
 import React from 'react'
-import {StyleSheet, View, Text, ActivityIndicator} from 'react-native'
+import {StyleSheet, View, Animated, StatusBar, Text, ActivityIndicator} from 'react-native'
 import AsyncStorage from '@react-native-community/async-storage';import Icon from "react-native-vector-icons/Ionicons";
+//colors
+import {colors} from '../assets/colors/colors'
 
 export default class  Enter extends React.Component{
     constructor(props){
         super(props)
+        this.state = {
+            springValue: new Animated.Value(.5),
+        }
       
     }
- 
 
-    //get from storage
-    _getTokenFormStorage = async () =>{
-        const keys = await AsyncStorage.getAllKeys()
-        const values = await AsyncStorage.multiGet(keys)
-        console.log(keys)
-        console.log(values)
-        // this.setState({toDisplay:values[0][1]})
+    _animate = () => {
+        Animated.spring(this.state.springValue,{
+            toValue:1,
+            friction:5,
+            useNativeDriver:true,
+
+        }).start( () => {
+            // this._navigateTo()
+            this.props.navigation.navigate('Main')
+        })
     }
 
 
+  
 
     //get token by from the login
     _navigateTo = () => {
@@ -70,23 +78,32 @@ export default class  Enter extends React.Component{
     //save token
     _saveToken = (token) => {
         AsyncStorage.setItem('token', token)
-        .then(()=>console.log('save'))
+        .then(()=>{
+            //save case
+        })
     }
 
 
     componentDidMount(){
-        setTimeout(() => {
-            this._navigateTo()  
-        }, 3000)
+        this._animate()
+            // this._navigateTo()  
+        // this.props.navigation.navigate('Main')
+      
     }
   
     render(){
         return(
             <View style={styles.container}>
-                <Icon name="ios-call" color='gray' size={25}/>   
-                <Text style={styles.title}>Contacts</Text>
-                <ActivityIndicator size='small' color='gray'/>
+                <StatusBar backgroundColor={colors.core}/>
+                <Animated.View style={[styles.logoContainer,
+                    { transform:[{scale:this.state.springValue}]}
+                ]}>
+                    <Text style={styles.logoText}>CONTA</Text>
+                    
+                </Animated.View>
+                <Text style={styles.title}>Save your contacts</Text>
             </View>
+        
         )
     }
 }
@@ -94,8 +111,21 @@ export default class  Enter extends React.Component{
 const styles = StyleSheet.create({
     container:{
         flex:1,
+        alignItems:'center',
         justifyContent:'center',
-        alignItems:'center'
      
+    },
+    logoContainer:{
+        justifyContent:'center',
+        alignItems:'center',
+        paddingVertical:10,
+        paddingHorizontal:20,
+        borderColor:colors.core,
+        borderWidth:StyleSheet.hairlineWidth,
+    },
+    logoText:{
+        fontWeight:'bold',
+        color:colors.core,
+        fontSize:27,
     }
 })

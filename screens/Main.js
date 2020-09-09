@@ -1,12 +1,13 @@
 import React from 'react'
-import {StyleSheet, ActivityIndicator, View, Modal, FlatList, Text, TextInput, TouchableOpacity} from 'react-native'
+import {StyleSheet, ActivityIndicator, Alert, View, Modal, FlatList, Text, TextInput, TouchableOpacity, Dimensions} from 'react-native'
 import {Entypo, Ionicons} from '@expo/vector-icons'
 import Icon from "react-native-vector-icons/Ionicons";
+//colors
+import {colors} from '../assets/colors/colors'
 //components
-import {ContactItem} from '../components/ContactItem'
+import ContactItem from '../components/ContactItem'
 import FloatButton from '../components/FloatButton'
 import AddContactModal from '../components/AddContactModal'
-
 
 export default class  Main extends React.Component{
     constructor(props){
@@ -16,9 +17,8 @@ export default class  Main extends React.Component{
             searchContact:'',
             isLoading:false,
             addContactModalIsShow: false,
-
             baseData:[
-                {first_name:'Hophoet', email:'hohoet@gmail.com', last_name:'Agbaku'},
+                {first_name:'Hophoet', email:'hohoet@gmail.com', last_name:''},
                 {first_name:'Robert', email:'hphoet@gmail.com', last_name:'Lucs'},
                 {first_name:'Emanule', email:'phoet@gmail.com', last_name:'Aboh'},
                 {first_name:'Alice', email:'hopet@gmail.com', last_name:'Bruce'},
@@ -29,7 +29,7 @@ export default class  Main extends React.Component{
                 {first_name:'Celine', email:'3@gmail.com', last_name:'Joz'},
             ],
             data:[
-                {first_name:'Hophoet', email:'hohoet@gmail.com', last_name:'Agbaku'},
+                {first_name:'Hophoet', email:'hohoet@gmail.com', last_name:''},
                 {first_name:'Robert', email:'hphoet@gmail.com', last_name:'Lucs'},
                 {first_name:'Emanule', email:'phoet@gmail.com', last_name:'Aboh'},
                 {first_name:'Alice', email:'hopet@gmail.com', last_name:'Bruce'},
@@ -63,8 +63,11 @@ export default class  Main extends React.Component{
     //get api contact method
     _getAllContact = () => {
         this.setState({isLoading:true})
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", "Token daa5a7e1545755b248094b06db07e08b2ba14cb9");
         var requestOptions = {
             method: 'GET',
+            headers:myHeaders,
             redirect: 'follow'
           };          
           fetch("https://hophoetmovies.herokuapp.com/api/", requestOptions)
@@ -83,26 +86,9 @@ export default class  Main extends React.Component{
        
     }
 
+
      
-    //get api contact method
-    _getContact = (id) => {
-        this.setState({isLoading:true})
-        var requestOptions = {
-            method: 'GET',
-            redirect: 'follow'
-          };          
-          fetch(`https://hophoetmovies.herokuapp.com/api/contact/${id}`, requestOptions)
-            .then(response => response.json())
-            .then(result => {
-                this.setState({data:[...result]})
-                this.setState({isLoading:false})
-            })
-            .catch(error => {
-                console.log('error', error)
-                this.setState({isLoading:false})
-            });
-       
-    }
+    
 
     _getAuthTokenFromSplashScreen = ()=>{
         let params = this.props.navigation.state.params
@@ -136,6 +122,8 @@ export default class  Main extends React.Component{
                             renderItem={({item})=><ContactItem item={item}/>}
                             refreshing={false}
                             onRefresh={this._getAllContact}
+                            
+                            showsVerticalScrollIndicator={false}
                     />
                 )
             }
@@ -163,20 +151,22 @@ export default class  Main extends React.Component{
 
 
     render(){
+        const coreColor = colors.core
         return(
             <View style={styles.container}>
                 <Modal onRequestClose={this.toggleAddContactModal} visible={this.state.addContactModalIsShow}>
                     <AddContactModal toggleAddContactModal={this.toggleAddContactModal}/>
                 </Modal>
+                <View style={styles.circle}/>
                 <View style={styles.headerContainer}>
                     <TouchableOpacity 
                         activeOpacity={.5}
                         style={styles.buttonContainer}
                         onPress={() => {
-                            this._searchContact(this.state.searchContact)
+                            
                         }}
                         >
-                        <Icon name="ios-search" color='gray' size={25}/>
+                        <Icon name="ios-search" color={coreColor} size={25}/>
                     </TouchableOpacity>
                     <TextInput 
                         ref='searchTextinput'
@@ -199,7 +189,7 @@ export default class  Main extends React.Component{
                     
                 </View>
 
-                <FloatButton toggleAddContactModal={this.toggleAddContactModal}/>
+                <FloatButton color={colors.core} toggleAddContactModal={this.toggleAddContactModal}/>
                
             
          
@@ -210,7 +200,6 @@ export default class  Main extends React.Component{
 
 const styles = StyleSheet.create({
     container:{
-        marginTop:20,
         flex:1,
         justifyContent:'center',
     },
@@ -277,5 +266,14 @@ const styles = StyleSheet.create({
         color:'gray',
         textAlign:'center',
 
+    },
+    circle:{
+        width:Dimensions.get('window').width,
+        height:Dimensions.get('window').width,
+        borderRadius:Dimensions.get('window').width,
+        backgroundColor:colors.core,
+        position:'absolute',
+        top:-Dimensions.get('window').width/2,
+        right:-Dimensions.get('window').width/2,
     }
 })
