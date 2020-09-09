@@ -1,7 +1,9 @@
 import React from 'react'
-import {StyleSheet, View, Text, ActivityIndicator, TextInput, TouchableOpacity} from 'react-native'
+import {StyleSheet, StatusBar, Dimensions, View, Text, ActivityIndicator, TextInput, TouchableOpacity} from 'react-native'
 import {Entypo, Ionicons} from '@expo/vector-icons'
 import Toast from '../components/toasts'
+//colors
+import {colors} from '../assets/colors/colors'
 
 export default class  Login extends React.Component{ 
     constructor(props){
@@ -129,6 +131,8 @@ export default class  Login extends React.Component{
     render(){
         return(
             <View style={styles.container}>
+                <StatusBar backgroundColor={colors.core}/>
+                <View style={styles.circle}/>
                 <View style={styles.headerContainer}>
                     <Text>Contact</Text>
                     <Text>Sign up to continue</Text>
@@ -176,7 +180,7 @@ export default class  Login extends React.Component{
                     <Text style={styles.buttonText}>SIGN UP</Text>
                 </TouchableOpacity>
                 <View style={styles.footer}>
-                    <Text onPress={()=> this.props.navigation.navigate('SignIn')} style={styles.footerTitle}>Alraidy have an account ? sign in</Text>
+                    <Text onPress={()=> this.props.navigation.navigate('SignIn')} style={styles.footerTitle}>Alraidy have an account ? <Text style={styles.signinText}>sign in</Text></Text>
                 </View>
             </View>
         )
@@ -191,15 +195,18 @@ const styles = StyleSheet.create({
      
     },
     buttonContainer:{
-        backgroundColor:'gray',
-        padding:10,
+        backgroundColor:colors.core,
+        padding:8,
         marginHorizontal:10,
         justifyContent:'center',
         alignItems:'center',
+        borderRadius:40,
+        elevation:10,
 
     },
     buttonText:{
         color:'white',
+        fontWeight:'bold',
     }
     ,
     title:{
@@ -213,9 +220,11 @@ const styles = StyleSheet.create({
      
         backgroundColor:'#ffff',
         marginHorizontal:10,
-        padding:10,
+        padding:8,
         marginBottom:10,
-        elevation:2
+        elevation:2,
+        borderRadius:40,
+        paddingHorizontal:20,
     },
     headerContainer:{
         alignItems:'center',
@@ -224,5 +233,18 @@ const styles = StyleSheet.create({
     footerTitle:{
         color:'gray',
         margin:20
+    },
+    circle:{
+        backgroundColor:colors.core,
+        width:Dimensions.get('window').width,
+        height:Dimensions.get('window').width,
+        position:'absolute',
+        borderRadius:Dimensions.get('window').width,
+        opacity:1,
+        left:-Dimensions.get('window').width/1.5
+    },
+    signinText:{
+        color:colors.core,
+        fontWeight:'bold',
     }
 })
