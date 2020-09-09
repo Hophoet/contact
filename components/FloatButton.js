@@ -10,12 +10,12 @@ export default class FloatButton extends React.Component {
 
     animation = new Animated.Value(0)
     
-
     toggleMenu = () => {
         const toValue = this.open ? 0 : 1
         Animated.spring(this.animation, {
             toValue,
-            friction:5
+            friction:5,
+            useNativeDriver:false,
         }).start()
 
         this.open = !this.open
@@ -42,15 +42,18 @@ export default class FloatButton extends React.Component {
                 }
             ]
         }
+
+        //get color props
+        const color = this.props.color
         return (
-            <View style={styles.container}>
+            <View style={[styles.container]}>
                  <TouchableWithoutFeedback onPress={this.props.toggleAddContactModal}>
-                    <Animated.View useNativeDriver={true} style={[styles.second, pinStyle]}>
-                    <Icon name="ios-call" color='white' size={25}/>   
+                    <Animated.View useNativeDriver={true} style={[styles.second, pinStyle, {backgroundColor:color}]}>
+                    <Icon name="ios-call" color={'white'} size={25}/>   
                     </Animated.View>
                 </TouchableWithoutFeedback>
                 <TouchableWithoutFeedback onPress={this.toggleMenu}>
-                    <Animated.View useNativeDriver={true} style={[styles.button, rotation]}>
+                    <Animated.View style={[styles.button, rotation, {backgroundColor:color}]}>
                         <Text style={styles.plus}>+</Text>
                     </Animated.View>
                 </TouchableWithoutFeedback>
@@ -72,7 +75,7 @@ const styles = StyleSheet.create({
     button:{
         width:60,
         height:60,
-        backgroundColor:'gray',
+   
         borderRadius:30,
         justifyContent:'center',
         alignItems:'center',
