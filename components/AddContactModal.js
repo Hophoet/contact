@@ -1,7 +1,8 @@
 
 import React from 'react'
 import {View, Text, StyleSheet, ScrollView, Dimensions, TouchableOpacity, TextInput} from 'react-native'
-
+//colors
+import {colors} from '../assets/colors/colors'
 //import {Ionicons} from '@expo/vector-icons'
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -9,12 +10,14 @@ import Icon from "react-native-vector-icons/Ionicons";
 export default class AddContactModal extends React.Component {
     constructor(props){
         super(props)
-        this.name = ''
+        this.firstName = ''
+        this.lastName = ''
+        this.email = ''
         this.phoneNumber = ''
     }
 
     _saveContact = () => {
-        console.log(this.name + '\n'+this.phoneNumber)
+        console.log('\n'+this.lastName+"\n"+this.firstName+"\n"+this.email+"\n"+this.phoneNumber)
     }
  
     render(){
@@ -36,17 +39,36 @@ export default class AddContactModal extends React.Component {
                 <ScrollView style={styles.body}>
                     <View style={styles.form}>
                         <View style={styles.textInputContainer}>
-                            <Icon style={styles.textInputIcon} name='ios-person' color='white' size={25}/>
+                            
                             <TextInput 
                                 autoFocus={true}
-                                onChangeText={text=>this.name = text}
+                                onChangeText={text=>this.firstName = text}
                                 style={styles.textInput} 
-                                placeholder='Name' 
+                                placeholder='First Name' 
+                                onSubmitEditing={() =>this.refs.lastName.focus()}
+                                />
+                        </View>
+                        <View style={styles.textInputContainer}>
+                            
+                            <TextInput 
+                                ref='lastName'
+                                onChangeText={text=>this.lastName = text}
+                                style={styles.textInput} 
+                                placeholder='Last Name' 
+                                onSubmitEditing={() =>this.refs.email.focus()}
+                                />
+                        </View>
+                        <View style={styles.textInputContainer}>
+                            
+                            <TextInput 
+                                ref='email'
+                                onChangeText={text=>this.email = text}
+                                style={styles.textInput} 
+                                placeholder='Email' 
                                 onSubmitEditing={() =>this.refs.phoneNumber.focus()}
                                 />
                         </View>
                         <View style={styles.textInputContainer}>
-                            <Icon style={styles.textInputIcon} name='ios-call' color='white' size={25}/>
                             <TextInput 
                                 ref='phoneNumber'
                                 onChangeText={text=>this.phoneNumber = text}
@@ -73,7 +95,7 @@ const styles = StyleSheet.create({
        
     },
     header:{
-        backgroundColor:'gray',
+        backgroundColor:colors.core,
         flexDirection:'row',
         justifyContent:'space-between',
         alignItems:'center',
