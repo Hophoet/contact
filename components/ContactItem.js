@@ -5,7 +5,8 @@ import {View, Text, StyleSheet, Modal, TouchableOpacity, Alert} from 'react-nati
 //import {Ionicons} from '@expo/vector-icons'
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Icon from "react-native-vector-icons/Ionicons";
-
+//colors
+import {colors} from '../assets/colors/colors'
 //
 import ContactDetailModal from './ContactDetailModal'
 
@@ -55,6 +56,18 @@ export default class ContactItem extends React.Component{
         }
     }
 
+    //show contact detail
+    _showContactDetail = (contact) => {
+        Alert.alert(
+            contact.first_name+' '+contact.last_name, 
+            '+09 89 87 67 33', 
+            [
+                {text:'Call', onPress:() => console.log('call')},
+            ], 
+            {cancelable:true}
+            )
+    }
+
     //toggle add contact component modal
     toggleContactDetailModal = () =>{
         this.setState({contactDetailModalIsShow:!this.state.contactDetailModalIsShow})
@@ -64,7 +77,7 @@ export default class ContactItem extends React.Component{
         const item = this.props.item
         let firstLetter =  item.first_name.trim().charAt(0).toUpperCase()
         let lastLetter =  item.last_name.trim().charAt(0).toUpperCase()
-    
+        const coreColor = colors.core
         return (
         <View>
             <Modal transparent={true} animationType="slide"   animated={true} onRequestClose={this.toggleContactDetailModal} visible={this.state.contactDetailModalIsShow}>
@@ -73,7 +86,9 @@ export default class ContactItem extends React.Component{
             <TouchableOpacity 
                 activeOpacity={.5} 
                 style={styles.container}
-                onPress={this.toggleContactDetailModal}
+                onPress={() =>  {
+                    this._showContactDetail(item)
+                }}
                 >
                 <View style={styles.iconContainer}> 
                     <Text style={styles.letterIcon} >{firstLetter}{lastLetter}</Text>
@@ -97,18 +112,20 @@ const styles = StyleSheet.create({
         margin:5
     },
     iconContainer:{
-        borderColor:'gray',
+        
         borderRadius:60,
         justifyContent:'center',
         alignItems:'center',
-        borderWidth:1,
+        borderWidth:StyleSheet.hairlineWidth,
         marginRight:5,
         width:60,
         height:60,
+        
         
     },
     letterIcon:{
         fontSize:25,
         fontWeight:'bold',
+        color:colors.core,
     }
 })
